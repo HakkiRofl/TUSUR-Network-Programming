@@ -103,10 +103,3 @@ std::string Klimov::get_result() {
     }
     return buffer;
 }
-
-
-//int main() {
-//    setlocale(LC_ALL, "RUSSIAN");
-//    Klimov Klimov;
-//    Klimov.start();
-//}

@@ -9,6 +9,9 @@
 #include <WS2tcpip.h>
 
 
+#define BUFFER_SIZE 1024
+
+
 enum error {
 	init_failed = 1, invalid_socket = 2, IP_translate = 3,
 	sub_IP_out_range = 4, num_IP_out_range = 5, failed_connection = 6,
@@ -24,25 +27,24 @@ struct settings {
 	int port = 1111;
 };
 
+
 class socket {
 protected:
 	WSAData WSADataStruct;
 	sockaddr_in SockAddrInfo; //хранения пары IP-адреc/Порт в сокете
-	
+	SOCKET Sock;
 	settings sets;
 	in_addr IPtoNum;
 	int valid_ip(std::string IP);
 public:
-	SOCKET Sock;
-	virtual void init(const char* IP = "127.0.0.1");
-	//client(const char* IP = "127.0.0.1");
 	socket() {};
 	~socket();
+	virtual void init(const char* IP = "127.0.0.1");
+	void setup(int af = AF_INET, int type = SOCK_STREAM, int protocol = 0, int port = 1111);
+	virtual void recv(std::string& recvBuff);
+	virtual void send(std::string &sendBuff);
 	void get_info();
 	void get_info(sockaddr_in& AddrInfo);
-	void setup(int af = AF_INET, int type = SOCK_STREAM, int protocol = 0, int port = 1111);
-	virtual void recv(char(&recvBuff)[], const short BUFF_SIZE);
-	virtual void send(char (&sendBuff)[], const short BUFF_SIZE);
 };
 
 
@@ -93,6 +95,4 @@ public:
 		return errors.c_str();
 	}
 };
-
-
 #endif

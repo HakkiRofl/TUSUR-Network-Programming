@@ -75,7 +75,5 @@ public:
     ~Klimov() {};
     void start();
     std::string get_result();
-
 };
-
 #endif

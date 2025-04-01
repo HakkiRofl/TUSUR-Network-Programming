@@ -1,4 +1,4 @@
-add_executable (Klimov "Klimov.cpp"  "Klimov.h")
+add_executable (Klimov "KlimovTest.cpp" "Klimov.cpp"  "Klimov.h")
 
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)

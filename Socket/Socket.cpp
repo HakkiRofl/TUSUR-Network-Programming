@@ -5,7 +5,6 @@ using enum error; //C++20
 
 
 socket::~socket() {
-	//std::cout << "DESTRUCTOR\n";
 	WSACleanup();
 	closesocket(Sock);
 }
@@ -33,8 +32,6 @@ int socket::valid_ip(std::string IP)
 		letter = IP[iter];
 		if (letter == '.') {
 			if (split_count < 4) {
-				//std::cout << std::atoi(buffer.c_str()) << std::endl;
-				//std::cout << split_count << std::endl;
 				if (0 <= std::atoi(buffer.c_str()) &&
 					std::atoi(buffer.c_str()) <= 255) {
 					splitted_IP[split_count] = buffer;
@@ -92,26 +89,28 @@ void socket::init(const char* IP)
 }
 
 
-void socket::recv(char(&recvBuff)[], const short BUFF_SIZE) {
-	//ZeroMemory(recvBuff, sizeof(&recvBuff)); // очистка
-	char buffer[1024];
+void socket::recv(std::string &recvBuff) {
+	recvBuff.clear(); // очистка
+	char buffer[BUFFER_SIZE];
 	ZeroMemory(buffer, sizeof(buffer));
 	short packet_size = 0;
 	packet_size = ::recv(Sock, buffer, sizeof(buffer), 0);
-	std::cout << "Packet_Size: " << packet_size;
+	#ifdef _DEBUG
+	std::cout << "Packet_Size: " << packet_size << std::endl;
+	#endif
 	// подпрограмма recv() ожидает, пока не придет сообщение
 	if (packet_size == SOCKET_ERROR) {
 		throw(socketException::socketException(recv_error, WSAGetLastError()));
 	}
 	else {
-		std::strncpy(recvBuff, buffer, BUFF_SIZE);
+		recvBuff = buffer;
 	}
 }
 
 
-void socket::send(char (&sendBuff)[], const short BUFF_SIZE) {
+void socket::send(std::string &sendBuff) {
 	short packet_size = 0;
-	packet_size = ::send(Sock, sendBuff, sizeof(char) * BUFF_SIZE, 0);
+	packet_size = ::send(Sock, sendBuff.c_str(), sizeof(char) * sendBuff.size(), 0);
 	// подпрограмма recv() ожидает, пока не придет сообщение
 	if (packet_size == SOCKET_ERROR) {
 		throw(socketException::socketException(send_error, WSAGetLastError()));

@@ -13,4 +13,4 @@ project ("network_programming")
 
 # Включите подпроекты.
 add_subdirectory ("Socket")
-#add_subdirectory ("Klimov")
+add_subdirectory ("Klimov")

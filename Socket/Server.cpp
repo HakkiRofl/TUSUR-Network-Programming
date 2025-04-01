@@ -64,13 +64,12 @@ server::~server() { // Закрываем подключение для клиентов и удаляем данные о них
 	clients.clear();
 }
 
+
 void server::listening() {
 	!listen(this->Sock, SOMAXCONN) ?
 		std::cout << "Прослушивание сети!\n" << std::endl :
 		throw(socketException::socketException(failed_connection, WSAGetLastError()));
 
-	//system("pause");
-	//get_server_info();
 	clientSock client;
 
 	int clientInfo_size = sizeof(client.clientSockAddrInfo);
@@ -105,44 +104,36 @@ void server::bind_socket() {
 }
 
 
-void server::recv(char(&recvBuff)[], const short BUFF_SIZE, clientSock Sock) {
-	//ZeroMemory(&recvBuff, sizeof(&recvBuff)); // очистка
-	char buffer[1024];
+void server::recv(std::string &recvBuff, clientSock Sock) {
+	recvBuff.clear(); // очистка
+	char buffer[BUFFER_SIZE];
 	ZeroMemory(buffer, sizeof(buffer)); // очистка
 	short packet_size = 0;
 	packet_size = ::recv(Sock.clientConnection, buffer, sizeof(buffer), 0);
-	std::cout << "PACKAGE: " << packet_size;
+	#ifdef _DEBUG
+	std::cout << "PACKAGE: " << packet_size << std::endl;
+	#endif
 	// подпрограмма recv() ожидает, пока не придет сообщение
 	if (packet_size == SOCKET_ERROR) {
 		throw(socketException::socketException(recv_error, WSAGetLastError()));
 	}
 	else {
-		std::strncpy(recvBuff, buffer, BUFF_SIZE);
+		recvBuff = buffer;
 	}
 }
 
 
-void server::send(char (&sendBuff)[], const short BUFF_SIZE, clientSock Sock) {
-	short packet_size = 0;
-	packet_size = ::send(Sock.clientConnection, sendBuff, sizeof(char) * BUFF_SIZE, 0);
-	std::cout << "PACKAGE: " << packet_size;
-	std::cout << "\nsendBuff: " << sendBuff;
-	if (packet_size == SOCKET_ERROR) {
-		throw(socketException::socketException(recv_error, WSAGetLastError()));
-	}
-}
-
-void server::send(std::string sendBuff, clientSock Sock) {
+void server::send(std::string &sendBuff, clientSock Sock) {
 	short packet_size = 0;
 	packet_size = ::send(Sock.clientConnection, sendBuff.c_str(), sizeof(char) * sendBuff.size(), 0);
-	std::cout << "PACKAGE: " << packet_size;
-	std::cout << "\nsendBuff: " << sendBuff;
+	#ifdef _DEBUG
+	std::cout << "PACKAGE: " << packet_size << std::endl;
+	std::cout << "\nsendBuff: " << sendBuff << std::endl;
+	#endif
 	if (packet_size == SOCKET_ERROR) {
 		throw(socketException::socketException(recv_error, WSAGetLastError()));
 	}
 }
-
-
 
 
 std::vector<clientSock> server::get_clients() {
@@ -167,44 +158,40 @@ std::string server::get_choice(const std::vector<std::string>& options) {
 
 
 void server::KlimovTest(clientSock Sock) {
-	char message[1024];
-	ZeroMemory(message, sizeof(message));
+	std::string message;
 	std::string buffer = "=== ТЕСТ КЛИМОВА ===\n"
 							"=== Цели ===\n";
 	buffer.append(get_choice(goals));
-	send(buffer.c_str(), clients[0]);
-	recv(message, 1024, Sock);
-	goal = static_cast<Goal>(atoi(message));
-	ZeroMemory(message, sizeof(message));
+	send(buffer, clients[0]);
+	recv(message, Sock);
+	goal = static_cast<Goal>(stoi(message));
+	message.clear();
 	buffer.clear();
 
 	buffer = "=== Объект деятельности ===\n";
 	buffer.append(get_choice(subjects));
 	send(buffer, Sock);
-	recv(message, 1024, Sock);
-	subject = static_cast<Subject>(atoi(message));
-	ZeroMemory(message, sizeof(message));
+	recv(message, Sock);
+	subject = static_cast<Subject>(stoi(message));
+	message.clear();
 	buffer.clear();
 
 	buffer = "=== Инструменты ===\n";
 	buffer.append(get_choice(tools));
 	send(buffer, Sock);
-	recv(message, 1024, Sock);
-	tool = static_cast<Tools>(atoi(message));
-	ZeroMemory(message, sizeof(message));
+	recv(message, Sock);
+	tool = static_cast<Tools>(stoi(message));
+	message.clear();
 	buffer.clear();
 
 	buffer = "=== Условия ===\n";
 	buffer.append(get_choice(tools));
 	send(buffer, Sock);
-	recv(message, 1024, Sock);
-	cond = static_cast<Conditions>(atoi(message));
-	ZeroMemory(message, sizeof(message));
+	recv(message, Sock);
+	cond = static_cast<Conditions>(stoi(message));
+	message.clear();
 	buffer.clear();
 
 	buffer = get_result();
 	send(buffer, Sock);
-
-
-
 }

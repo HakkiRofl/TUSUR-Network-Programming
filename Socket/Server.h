@@ -24,9 +24,8 @@ public:
 	void listening();
 	void bind_socket();
 	std::vector<clientSock> get_clients();
-	virtual void recv(char(&recvBuff)[], const short BUFF_SIZE, clientSock Sock);
-	virtual void send(char(&sendBuff)[], const short BUFF_SIZE, clientSock Sock);
-	virtual void send(std::string sendBuff, clientSock Sock);
+	virtual void recv(std::string &recvBuff, clientSock Sock);
+	virtual void send(std::string &sendBuff, clientSock Sock);
 	std::string get_choice(const std::vector<std::string>& options);
 	void KlimovTest(clientSock Sock);
 };

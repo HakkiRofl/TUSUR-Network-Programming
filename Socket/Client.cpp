@@ -16,21 +16,18 @@ int main(int argc, char* argv[])
 			client.init();
 			client.get_info();
 			client.connecting();
-			//char message[1024] = "TEST";
-			//client.send(message, 1024);	
-			//char answer[1024];
-			//client.recv(answer, 1024);
-			//std::cout << "SERVER: " << answer;
-			char message[1024];
+
+			std::string message;
 			while (1) {
-				char answer[1024];
-				client.recv(message, 1024);
+				std::string answer;
+				client.recv(message);
 				std::cout << message;
-				if (strstr(message, "ÐÅÇÓËÜÒÀÒÛ"))
+				if (!(message.find("ÐÅÇÓËÜÒÀÒÛ") == std::string::npos))
 					break;
 				std::cin >> answer;
-				client.send(answer, 1024);	
+				client.send(answer);	
 			}
+
 			system("pause");
 			break;
 		}
@@ -43,11 +40,18 @@ int main(int argc, char* argv[])
 			client.init(argv[1]);
 			client.get_info();
 			client.connecting();
-			char message[1024] = "TEST";
-			client.send(message, 1024);
-			char answer[1024];
-			client.recv(answer, 1024);
-			std::cout << "SERVER: " << answer;
+
+			std::string message;
+			while (1) {
+				std::string answer;
+				client.recv(message);
+				std::cout << message;
+				if (!(message.find("ÐÅÇÓËÜÒÀÒÛ") == std::string::npos))
+					break;
+				std::cin >> answer;
+				client.send(answer);
+			}
+
 			system("pause");
 			break;
 		}
@@ -60,6 +64,18 @@ int main(int argc, char* argv[])
 			client.init(argv[1]);
 			client.get_info();
 			client.connecting();
+
+			std::string message;
+			while (1) {
+				std::string answer;
+				client.recv(message);
+				std::cout << message;
+				if (!(message.find("ÐÅÇÓËÜÒÀÒÛ") == std::string::npos))
+					break;
+				std::cin >> answer;
+				client.send(answer);
+			}
+
 			system("pause");
 			break;
 		}
@@ -79,6 +95,5 @@ void client::connecting() {
 		sizeof(SockAddrInfo)) ?
 		std::cout << "Âûïîëíåíî ïîäêëþ÷åíèå ê ñåðâåðó\n" << std::endl :
 		throw(socketException::socketException(failed_connection, WSAGetLastError()));
-	//get_client_info();
 }
 
