@@ -61,10 +61,14 @@ void socket::init(const char* IP)
 	int erStat = WSAStartup(DLLVersion, &WSADataStruct);
 
 	// Оператор Элвиса применять нежелательно!! 
-	erStat ?
+	if (erStat)
 		throw(socketException::socketException(
-			init_failed, WSAGetLastError())) :
-		std::cout << "WSA DLL успешно подключена\n";
+			init_failed, WSAGetLastError()));
+
+
+#ifdef _DEBUG
+	std::cout << "WSA DLL успешно подключена\n";
+#endif
 
 	Sock = ::socket(sets.af, sets.type, sets.protocol);
 
@@ -88,31 +92,31 @@ void socket::init(const char* IP)
 }
 
 
+void socket::recv(char(&recvBuff)[], const short BUFF_SIZE) {
+	//ZeroMemory(recvBuff, sizeof(&recvBuff)); // очистка
+	char buffer[1024];
+	ZeroMemory(buffer, sizeof(buffer));
+	short packet_size = 0;
+	packet_size = ::recv(Sock, buffer, sizeof(buffer), 0);
+	std::cout << "Packet_Size: " << packet_size;
+	// подпрограмма recv() ожидает, пока не придет сообщение
+	if (packet_size == SOCKET_ERROR) {
+		throw(socketException::socketException(recv_error, WSAGetLastError()));
+	}
+	else {
+		std::strncpy(recvBuff, buffer, BUFF_SIZE);
+	}
+}
 
-//void socket::listening()
-//{// Снизу исходник, просто продолжить!
-//	!listen(socketSock, SOMAXCONN) ?
-//		std::cout << "Прослушивание сети!\n" << std::endl :
-//		throw(socketException::socketException(failed_connection, WSAGetLastError()));
-//
-//	//system("pause");
-//	//get_socket_info();
-//	sockaddr_in clientSockAddrInfo;
-//	int clientInfo_size = sizeof(clientSockAddrInfo);
-//	SOCKET clientConnection = accept(socketSock,
-//		(sockaddr*)&clientSockAddrInfo, &clientInfo_size);
-//
-//	if (clientConnection == INVALID_SOCKET) {
-//		closesocket(clientConnection);
-//		throw(socketException::socketException(client_connection_error));
-//	}
-//	else {
-//		std::cout << "Клиент подключен!" << std::endl;
-//		get_info(clientSockAddrInfo);
-//	}
-//
-//
-//}
+
+void socket::send(char (&sendBuff)[], const short BUFF_SIZE) {
+	short packet_size = 0;
+	packet_size = ::send(Sock, sendBuff, sizeof(char) * BUFF_SIZE, 0);
+	// подпрограмма recv() ожидает, пока не придет сообщение
+	if (packet_size == SOCKET_ERROR) {
+		throw(socketException::socketException(send_error, WSAGetLastError()));
+	}
+}
 
 
 void socket::get_info()
@@ -125,6 +129,8 @@ void socket::get_info()
 		<< " StackFamily= " << SockAddrInfo.sin_family
 		<< " sizeof= " << sizeof(SockAddrInfo) << "\n";
 }
+
+
 void socket::get_info(sockaddr_in& AddrInfo)
 {
 	std::cout << " Client:" << std::endl;
