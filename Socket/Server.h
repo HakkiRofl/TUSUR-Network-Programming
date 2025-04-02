@@ -29,6 +29,4 @@ public:
 	std::string get_choice(const std::vector<std::string>& options);
 	void KlimovTest(clientSock Sock);
 };
-
-
-#endif SERVER_H
+#endif

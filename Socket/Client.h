@@ -11,7 +11,4 @@ public:
 	~client() {};
 	void connecting();
 };
-
-
-
 #endif

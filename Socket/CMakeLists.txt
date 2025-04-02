@@ -9,8 +9,7 @@ add_executable (server "Socket_server.cpp" "Socket_server.h" "../res/server.rc")
 add_executable (server_refactor "Server.h" "Server.cpp" "Socket.h" "Socket.cpp"
 "../Klimov/Klimov.h" "../Klimov/Klimov.cpp" "../res/server.rc")
 
-add_executable (client_refactor "Client.h" "Client.cpp" "Socket.h" "Socket.cpp"
-"../Klimov/Klimov.h" "../Klimov/Klimov.cpp" "../res/client.rc")
+add_executable (client_refactor "Client.h" "Client.cpp" "Socket.h" "Socket.cpp" "../res/client.rc")
 
 add_executable (client "Socket_client.cpp" "Socket_client.h" "../res/client.rc")
 

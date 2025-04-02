@@ -185,7 +185,7 @@ void server::KlimovTest(clientSock Sock) {
 	buffer.clear();
 
 	buffer = "=== Условия ===\n";
-	buffer.append(get_choice(tools));
+	buffer.append(get_choice(conditions));
 	send(buffer, Sock);
 	recv(message, Sock);
 	cond = static_cast<Conditions>(stoi(message));
